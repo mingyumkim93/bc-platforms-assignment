@@ -1,6 +1,6 @@
 import BCUser, { BCRole } from "../types/BCUser";
 import CustomerUser, { CustomerRole } from "../types/CustomerUser";
-import ConvertResult from "../types/ConvertResult";
+import ConversionResult from "../types/ConversionResult";
 import BCUsers from "../data/user";
 
 const ROLE_MAPPING = {
@@ -9,7 +9,7 @@ const ROLE_MAPPING = {
   [CustomerRole.WAREHOUSE]: BCRole.WAREHOUSE
 };
 
-export function convertToBCUser(customerUser: CustomerUser): ConvertResult {
+export function convertToBCUser(customerUser: CustomerUser): ConversionResult {
   const bcRoles: BCRole[] = [];
   const erroneousRoles: unknown[] = [];
 

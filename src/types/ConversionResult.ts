@@ -1,6 +1,6 @@
 import { BCRole } from "./BCUser";
 
-export default interface ConvertResult {
+export default interface ConversionResult {
   addedRoles: BCRole[];
   deletedRoles: BCRole[];
   unchangedRoles: BCRole[];
