@@ -1,25 +1,25 @@
 import BCUser, { BCRole } from "../types/BCUser";
-import ClientUser, { ClientRole } from "../types/ClientUser";
+import CustomerUser, { CustomerRole } from "../types/CustomerUser";
 import ConvertResult from "../types/ConvertResult";
 import BCUsers from "../data/user";
 
 const ROLE_MAPPING = {
-  [ClientRole.ADMIN]: BCRole.ADMIN,
-  [ClientRole.CLINICAL]: BCRole.CLINICAL,
-  [ClientRole.WAREHOUSE]: BCRole.WAREHOUSE
+  [CustomerRole.ADMIN]: BCRole.ADMIN,
+  [CustomerRole.CLINICAL]: BCRole.CLINICAL,
+  [CustomerRole.WAREHOUSE]: BCRole.WAREHOUSE
 };
 
-export function convertToBCUser(clientUser: ClientUser): ConvertResult {
+export function convertToBCUser(customerUser: CustomerUser): ConvertResult {
   const bcRoles: BCRole[] = [];
   const erroneousRoles: unknown[] = [];
 
-  clientUser.clientRoles.forEach((clientRole) => {
-    if (ROLE_MAPPING[clientRole]) bcRoles.push(ROLE_MAPPING[clientRole]);
-    else erroneousRoles.push(clientRole);
+  customerUser.customerRoles.forEach((customerRole) => {
+    if (ROLE_MAPPING[customerRole]) bcRoles.push(ROLE_MAPPING[customerRole]);
+    else erroneousRoles.push(customerRole);
   });
 
   const convertedBCUser: BCUser = {
-    name: clientUser.name,
+    name: customerUser.name,
     bcRoles
   };
 
@@ -50,6 +50,6 @@ export function convertToBCUser(clientUser: ClientUser): ConvertResult {
   }
 }
 
-export function validateClientUser(clientUser: any): clientUser is ClientUser {
-  return typeof clientUser.name === "string" && Array.isArray(clientUser.clientRoles);
+export function validateCustomerUser(customerUser: any): customerUser is CustomerUser {
+  return typeof customerUser.name === "string" && Array.isArray(customerUser.customerRoles);
 }
