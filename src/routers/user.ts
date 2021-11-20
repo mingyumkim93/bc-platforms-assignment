@@ -13,9 +13,17 @@ const ROLE_MAPPING = {
 };
 
 function convertToBCUser(clientUser: ClientUser): ConvertResult {
+  const bcRoles: BCRole[] = [];
+  const erroneousRoles: unknown[] = [];
+
+  clientUser.clientRoles.forEach((clientRole) => {
+    if (ROLE_MAPPING[clientRole]) bcRoles.push(ROLE_MAPPING[clientRole]);
+    else erroneousRoles.push(clientRole);
+  });
+
   const convertedBCUser: BCUser = {
     name: clientUser.name,
-    bcRoles: clientUser.clientRoles.map((clientRole) => ROLE_MAPPING[clientRole])
+    bcRoles
   };
 
   const oldUser = BCUsers.find((user) => user.name === convertedBCUser.name);
@@ -26,7 +34,8 @@ function convertToBCUser(clientUser: ClientUser): ConvertResult {
     return {
       addedRoles: convertedBCUser.bcRoles,
       deletedRoles: [],
-      unchangedRoles: []
+      unchangedRoles: [],
+      erroneousRoles
     };
   } else {
     const oldUserIndex = BCUsers.findIndex((user) => user.name === convertedBCUser.name);
@@ -38,15 +47,25 @@ function convertToBCUser(clientUser: ClientUser): ConvertResult {
     return {
       addedRoles,
       deletedRoles,
-      unchangedRoles
+      unchangedRoles,
+      erroneousRoles
     };
   }
 }
 
+function validateClientUser(clientUser: any): clientUser is ClientUser {
+  return typeof clientUser.name === "string" && Array.isArray(clientUser.clientRoles);
+}
+
 userRouter.post("/roles", (req, res) => {
-  const clientUser = req.body as ClientUser;
-  const result = convertToBCUser(clientUser);
-  res.json(result);
+  const clientUser = req.body;
+  const isValid = validateClientUser(clientUser);
+  if (!isValid) {
+    res.status(400).json({ message: "Not a valid client user!" });
+  } else {
+    const result = convertToBCUser(clientUser);
+    res.json(result);
+  }
 });
 
 export default userRouter;
